@@ -2,6 +2,14 @@
 
 ## Usage
 
+### Command Line Interface
+
+```bash
+bqloader
+```
+
+### API
+
 ```python
 from bq_loader import create_table
 

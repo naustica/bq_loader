@@ -3,11 +3,12 @@ import os
 import json
 
 
-create_table(table_id: str,
-             file_path: str,
-             schema_file: str,
-             source_format: str,
-             ignore_unknown_values: bool):
+def create_table(table_id: str,
+                 file_path: str,
+                 schema_file: str,
+                 source_format: str,
+                 ignore_unknown_values: bool) -> None:
+
 
     with open(schema_file, 'r') as schema_file:
         schema = json.load(schema_file)
