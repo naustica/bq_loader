@@ -49,7 +49,7 @@ def main():
                  schema_file=answers['schema_file'],
                  source_format=answers['source_format'],
                  write_disposition=answers['write_disposition'],
-                 destination_table_description=answers['destination_table_description']
+                 destination_table_description=answers['destination_table_description'],
                  ignore_unknown_values=answers['ignore_unknown_values'])
 
 if __name__ == '__main__':

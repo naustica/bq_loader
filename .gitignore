@@ -4,3 +4,4 @@ __pycache__/
 test_data/
 test_schema/
 .pytest_cache/
+dist/
