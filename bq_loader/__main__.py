@@ -38,7 +38,7 @@ questions = [
     {
         'type': 'confirm',
         'name': 'ignore_unknown_values',
-        'message': 'Should be unknown values ignored?',
+        'message': 'Ignore unknown values?',
     },
 ]
 
