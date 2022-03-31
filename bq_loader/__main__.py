@@ -21,8 +21,14 @@ questions = [
     {
         'type': 'list',
         'name': 'source_format',
-        'message': 'Please enter a source format',
+        'message': 'Please choose a source format',
         'choices': ['jsonl', 'avro', 'csv', 'mro', 'orc', 'parquet']
+    },
+    {
+        'type': 'list',
+        'name': 'write_disposition',
+        'message': 'Please choose an action that should occur if the destination table already exists',
+        'choices': ['WRITE_TRUNCATE', 'WRITE_APPEND', 'WRITE_EMPTY']
     },
     {
         'type': 'confirm',
@@ -37,6 +43,7 @@ def main():
                  file_path=answers['file_path'],
                  schema_file=answers['schema_file'],
                  source_format=answers['source_format'],
+                 write_disposition=answers['write_disposition'],
                  ignore_unknown_values=answers['ignore_unknown_values'])
 
 if __name__ == '__main__':

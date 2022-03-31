@@ -7,6 +7,8 @@ def create_table(table_id: str,
                  file_path: str,
                  schema_file: str,
                  source_format: str,
+                 write_disposition: str,
+                 destination_table_description: str,
                  ignore_unknown_values: bool) -> None:
 
 
@@ -34,9 +36,16 @@ def create_table(table_id: str,
     else:
         raise ValueError('Source format {0} is not implemented.'.format(source_format))
 
+    if write_disposition not in ['WRITE_TRUNCATE', 'WRITE_APPEND', 'WRITE_EMPTY']:
+        raise ValueError('Type of class WriteDisposition {0} is not implemented.'.format(source_format))
+
+    client = bigquery.Client()
+
     job_config = bigquery.LoadJobConfig(source_format=source_format,
                                         ignore_unknown_values=ignore_unknown_values,
-                                        schema=schema)
+                                        schema=schema,
+                                        write_disposition=write_disposition,
+                                        destination_table_description=destination_table_description)
 
     jobs = []
 
