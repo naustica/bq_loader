@@ -11,7 +11,7 @@ from .utils import source_format_validator, write_disposition_validator
 def create_table_from_local(table_id: str,
                             project_id: str,
                             dataset_id: str,
-                            file_paths: str,
+                            file_path: str,
                             schema_file_path: str,
                             source_format: str,
                             write_disposition: str,
@@ -35,7 +35,7 @@ def create_table_from_local(table_id: str,
 
     jobs = []
 
-    for root, dirs, files in os.walk(os.path.abspath(file_paths)):
+    for root, dirs, files in os.walk(os.path.abspath(file_path)):
         for file in files:
             with open(os.path.join(root, file), 'rb') as source_file:
                 job = client.load_table_from_file(source_file,
@@ -91,13 +91,16 @@ def create_table_from_bucket(uri: str,
 
 # https://github.com/The-Academic-Observatory/observatory-platform/blob/develop/observatory-platform/observatory/platform/utils/gc_utils.py
 def upload_files_to_bucket(bucket_name: str,
-                           file_paths: str,
+                           file_path: str,
                            gcb_dir: str,
                            max_processes: int = cpu_count()) -> None:
 
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(' No such directory: {0}'.format(file_path))
+
     with ProcessPoolExecutor(max_workers=max_processes) as executor:
         futures = []
-        for root, dirs, files in os.walk(os.path.abspath(file_paths)):
+        for root, dirs, files in os.walk(os.path.abspath(file_path)):
             for file in files:
                 blob_name = f'{gcb_dir}/{file}'
                 future = executor.submit(
