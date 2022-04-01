@@ -17,6 +17,30 @@ def create_table_from_local(table_id: str,
                             write_disposition: str,
                             table_description: str,
                             ignore_unknown_values: bool) -> None:
+    """
+    This function creates a table from a local file or directory.
+
+    Parameters
+    ----------
+    table_id: str
+        The name of the table
+    project_id: str
+        The name of the project in BigQuery
+    dataset_id: str
+        The name of the dataset in BigQuery
+    file_path: str
+        The directory or file from which the table is created
+    schema_file_path: str
+        Path to the table schema
+    source_format: str
+        The file format
+    write_disposition: str
+        Describes whether a job should overwrite or append the existing destination table if it already exists
+    table_description: str
+        The table description
+    ignore_unknown_values: bool
+        Whether unknown values should be ignored or not
+    """
 
     source_format = source_format_validator(source_format)
     write_disposition = write_disposition_validator(write_disposition)
@@ -47,7 +71,7 @@ def create_table_from_local(table_id: str,
     for job in jobs:
         job.result()
 
-# https://github.com/The-Academic-Observatory/observatory-platform/blob/develop/observatory-platform/observatory/platform/utils/gc_utils.py
+
 def create_table_from_bucket(uri: str,
                              table_id: str,
                              project_id: str,
@@ -57,8 +81,39 @@ def create_table_from_bucket(uri: str,
                              write_disposition: str,
                              table_description: str,
                              ignore_unknown_values: bool) -> None:
+    """
+    This function creates a table from a Google Bucket.
 
-    assert uri.startswith('gs://')
+    Parameters
+    ----------
+    uri: str
+         The URI of your Google bucket
+    table_id: str
+        The name of the table
+    project_id: str
+        The name of the project in BigQuery
+    dataset_id: str
+        The name of the dataset in BigQuery
+    schema_file_path: str
+        Path to the table schema
+    source_format: str
+        The file format
+    write_disposition: str
+        Describes whether a job should overwrite or append the existing destination table if it already exists
+    table_description: str
+        The table description
+    ignore_unknown_values: bool
+        Whether unknown values should be ignored or not
+    Raises
+    ------
+    ValueError
+        If the URI does not start with 'gs://'
+    BadRequest
+        If the creation of the table failed
+    """
+
+    if not uri.startswith('gs://'):
+        raise ValueError('URI must start with gs://')
 
     source_format = source_format_validator(source_format)
     write_disposition = write_disposition_validator(write_disposition)
@@ -89,11 +144,29 @@ def create_table_from_bucket(uri: str,
         if load_job:
             print(f'Error collection:\n{load_job.errors}')
 
-# https://github.com/The-Academic-Observatory/observatory-platform/blob/develop/observatory-platform/observatory/platform/utils/gc_utils.py
+
 def upload_files_to_bucket(bucket_name: str,
                            file_path: str,
                            gcb_dir: str,
                            max_processes: int = cpu_count()) -> None:
+    """
+    This function uploads files into a Google Bucket.
+
+    Parameters
+    ----------
+    bucket_name: str
+         The name of your Google Bucket
+    file_path: str
+        The directory or file which should be uploaded
+    gcb_dir: str
+        The name of the destination directory in the Google Bucket
+    max_processes: int
+        Number of concurrent tasks
+    Raises
+    ------
+    FileNotFoundError
+        If the file_path does not exist
+    """
 
     if not os.path.exists(file_path):
         raise FileNotFoundError(' No such directory: {0}'.format(file_path))
@@ -117,6 +190,18 @@ def upload_files_to_bucket(bucket_name: str,
 def upload_file_to_bucket(bucket_name: str,
                           blob_name: str,
                           file_path: str) -> None:
+    """
+    This function uploads a single file into a Google Bucket.
+
+    Parameters
+    ----------
+    bucket_name: str
+         The name of your Google Bucket
+    blob_name: str
+        The name of the destination file
+    file_path: str
+        The file which should be uploaded
+    """
 
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)

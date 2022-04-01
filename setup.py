@@ -25,7 +25,8 @@ setup(name='bq_loader',
         'google-cloud-bigquery',
         'google-cloud-storage',
         'google-api-core',
-        'PyInquirer'
+        'PyInquirer',
+        'prompt_toolkit==1.0.14'
       ],
       extras_require={
        'dev': [
