@@ -84,6 +84,9 @@ def create_table_from_bucket(uri: str,
     """
     This function creates a table from a Google Bucket.
 
+    Code of this function is inspired by:
+    https://github.com/The-Academic-Observatory/observatory-platform/blob/develop/observatory-platform/observatory/platform/utils/gc_utils.py
+
     Parameters
     ----------
     uri: str
@@ -151,6 +154,9 @@ def upload_files_to_bucket(bucket_name: str,
                            max_processes: int = cpu_count()) -> None:
     """
     This function uploads files into a Google Bucket.
+
+    Code of this function is inspired by:
+    https://github.com/The-Academic-Observatory/observatory-platform/blob/develop/observatory-platform/observatory/platform/utils/gc_utils.py
 
     Parameters
     ----------
