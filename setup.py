@@ -23,6 +23,8 @@ setup(name='bq_loader',
       },
       install_requires=[
         'google-cloud-bigquery',
+        'google-cloud-storage',
+        'google-api-core',
         'PyInquirer'
       ],
       extras_require={
