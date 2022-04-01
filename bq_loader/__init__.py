@@ -1,8 +1,7 @@
 from google.cloud import bigquery, storage
 from google.cloud.bigquery import LoadJobConfig
 from google.api_core.exceptions import BadRequest
-import multiprocessing
-from multiprocessing import BoundedSemaphore, cpu_count
+from multiprocessing import cpu_count
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import os
 from .utils import source_format_validator, write_disposition_validator
