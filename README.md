@@ -1,4 +1,4 @@
-# bq_loader
+# bq_loader - Interactive Command Line Interface for Google BigQuery
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/bq_loader)](https://pypi.org/project/bq_loader/)
 [![License](https://img.shields.io/github/license/naustica/bq_loader)](https://github.com/naustica/bq_loader/blob/master/LICENSE.txt)
@@ -9,9 +9,6 @@
 
 ```bash
 pip install bq_loader
-
-# toolkit error
-# pip install prompt_toolkit==1.0.14
 ```
 
 ## Usage

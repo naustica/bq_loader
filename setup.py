@@ -8,7 +8,7 @@ with open(path.join(dir, 'README.md'), encoding='utf-8') as file:
 
 setup(name='bq_loader',
       version='0.1.2',
-      description='',
+      description='Interactive Command Line Interface for Google BigQuery',
       long_description=long_description,
       long_description_content_type='text/markdown',
       url='https://github.com/naustica/bq_loader',
@@ -16,7 +16,7 @@ setup(name='bq_loader',
       author_email='nick.haupka@gmail.com',
       license='MIT',
       packages=['bq_loader'],
-      keywords=['BigQuery'],
+      keywords=['BigQuery', 'Google', 'Bucket', 'Cloud', 'Storage', 'Data Analytic'],
       project_urls={
         'Source': 'https://github.com/naustica/bq_loader',
         'Tracker': 'https://github.com/naustica/bq_loader/issues'
