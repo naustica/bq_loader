@@ -19,6 +19,8 @@ pip install bq_loader
 bqloader
 ```
 
+![Demo](media/demo.gif)
+
 ### API
 
 #### Create a table from a local file or directory
@@ -58,7 +60,7 @@ create_table_from_bucket(uri='gs://bigschol/tests/*',
 ```python
 from bq_loader import upload_files_to_bucket
 
-upload_files_to_bucket(bucket_name: 'bigschol',
-                       file_path: 'test_data/',
-                       gcb_dir: 'tests')
+upload_files_to_bucket(bucket_name='bigschol',
+                       file_path='test_data/',
+                       gcb_dir='tests')
 ```

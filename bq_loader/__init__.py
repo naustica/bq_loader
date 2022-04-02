@@ -4,7 +4,7 @@ from google.api_core.exceptions import BadRequest
 from multiprocessing import cpu_count
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import os
-from .utils import source_format_validator, write_disposition_validator
+from .utils import source_format_validator, write_disposition_validator, print_progress
 
 
 def create_table_from_local(table_id: str,
@@ -67,7 +67,8 @@ def create_table_from_local(table_id: str,
 
                 jobs.append(job)
 
-    for job in jobs:
+    for n, job in enumerate(jobs, start=1):
+        print_progress(n/len(jobs))
         job.result()
 
 
@@ -140,9 +141,9 @@ def create_table_from_bucket(uri: str,
 
         result = load_job.result()
 
-        print(f'load bigquery table result.state={result.state}')
+        print(f'Load BigQuery table result.state={result.state}')
     except BadRequest as e:
-        print(f'load bigquery table failed: {e}.')
+        print(f'Load bigquery table failed: {e}.')
         if load_job:
             print(f'Error collection:\n{load_job.errors}')
 
@@ -188,7 +189,8 @@ def upload_files_to_bucket(bucket_name: str,
                     file_path=os.path.join(root, file))
                 futures.append(future)
 
-        for future in as_completed(futures):
+        for n, future in enumerate(as_completed(futures), start=1):
+            print_progress(n/len(futures))
             future.result()
 
 
