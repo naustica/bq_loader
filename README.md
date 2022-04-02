@@ -19,7 +19,7 @@ pip install bq_loader
 bqloader
 ```
 
-![Demo](media/demo.gif)
+![Demo](https://raw.githubusercontent.com/naustica/bq_loader/master/media/demo.gif)
 
 ### API
 
