@@ -11,6 +11,16 @@
 pip install bq_loader
 ```
 
+## Authentication
+
+This package is built on top of Google libraries. To use this package you need to authenticate with your google account. For more information see: https://cloud.google.com/storage/docs/authentication.
+
+You can use the package [gcloud](https://pypi.org/project/gcloud/) to authenticate yourself.
+
+```bash
+gcloud auth
+```
+
 ## Usage
 
 ### Command Line Interface
