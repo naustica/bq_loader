@@ -20,11 +20,15 @@ questions_create_table_from_local = [
     inquirer.Text('dataset_id',
                   message='Please enter a dataset id'),
 
-    inquirer.Text('file_path',
-                  message='Please enter a file path'),
+    inquirer.Path('file_path',
+                  message='Please enter a file path',
+                  exists=True,
+                  path_type=inquirer.Path.DIRECTORY),
 
-    inquirer.Text('schema_file_path',
-                  message='Please enter a schema file'),
+    inquirer.Path('schema_file_path',
+                  message='Please enter a schema file',
+                  exists=True,
+                  path_type=inquirer.Path.FILE),
 
     inquirer.List('source_format',
                   message='Please choose a source format',
@@ -54,8 +58,10 @@ questions_create_table_from_bucket = [
     inquirer.Text('dataset_id',
                   message='Please enter a dataset id'),
 
-    inquirer.Text('schema_file_path',
-                  message='Please enter a schema file'),
+    inquirer.Path('schema_file_path',
+                  message='Please enter a schema file',
+                  exists=True,
+                  path_type=inquirer.Path.FILE),
 
     inquirer.List('source_format',
                   message='Please choose a source format',
@@ -76,8 +82,10 @@ questions_upload_files_to_bucket = [
     inquirer.Text('bucket_name',
                   message='Please enter a bucket name'),
 
-    inquirer.Text('file_path',
-                  message='Please enter a file path'),
+    inquirer.Path('file_path',
+                  message='Please enter a file path',
+                  exists=True,
+                  path_type=inquirer.Path.DIRECTORY),
 
     inquirer.Text('gcb_dir',
                   message='Please enter the name of the directory which should be created')
