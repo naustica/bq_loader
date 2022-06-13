@@ -6,7 +6,7 @@ from bq_loader import create_table_from_local, create_table_from_bucket, upload_
 class Test_bq_loader:
 
     @pytest.mark.skip(reason='TODO')
-    def test_create_table_from_local(self):
+    def test_create_table_from_local_EMPTY(self):
         create_table_from_local(table_id='test_bq_loader',
                                 project_id='subugoe-collaborative',
                                 dataset_id='resources',
@@ -18,7 +18,7 @@ class Test_bq_loader:
                                 ignore_unknown_values=True)
 
     @pytest.mark.skip(reason='TODO')
-    def test_create_table_from_local(self):
+    def test_create_table_from_local_APPEND(self):
         create_table_from_local(table_id='test_bq_loader',
                                 project_id='subugoe-collaborative',
                                 dataset_id='resources',

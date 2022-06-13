@@ -20,10 +20,8 @@ questions_create_table_from_local = [
     inquirer.Text('dataset_id',
                   message='Please enter a dataset id'),
 
-    inquirer.Path('file_path',
-                  message='Please enter a file path',
-                  exists=True,
-                  path_type=inquirer.Path.DIRECTORY),
+    inquirer.Text('file_path',
+                  message='Please enter a file path'),
 
     inquirer.Path('schema_file_path',
                   message='Please enter a schema file',

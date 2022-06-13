@@ -1,10 +1,57 @@
 from google.cloud import bigquery, storage
-from google.cloud.bigquery import LoadJobConfig
+from google.cloud.bigquery import LoadJobConfig, SourceFormat
 from google.api_core.exceptions import BadRequest
 from multiprocessing import cpu_count
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import os
+from dataclasses import dataclass
 from .utils import source_format_validator, write_disposition_validator, print_progress
+
+
+@dataclass
+class JobConfig:
+    project_id: str
+    dataset_id: str
+    schema_file_path: str
+    source_format: str
+    csv_field_delimiter: str = ','
+    csv_quote_character: str = '"'
+    csv_allow_quoted_newlines: bool = False
+    csv_skip_leading_rows: int = 0
+    write_disposition: str = bigquery.WriteDisposition.WRITE_EMPTY
+    table_description: str = ''
+    ignore_unknown_values: bool = False
+
+    @property
+    def client(self):
+        client = bigquery.Client()
+        return client
+
+    @property
+    def dataset(self):
+        dataset = bigquery.Dataset(f'{self.project_id}.{self.dataset_id}')
+        return dataset
+
+    @property
+    def config(self):
+        source_format = source_format_validator(self.source_format)
+        write_disposition = write_disposition_validator(self.write_disposition)
+
+        job_config = LoadJobConfig()
+
+        job_config.source_format=source_format
+        job_config.write_disposition = write_disposition
+        job_config.ignore_unknown_values=self.ignore_unknown_values
+        job_config.schema=self.client.schema_from_json(self.schema_file_path)
+        job_config.destination_table_description = self.table_description
+
+        if source_format == SourceFormat.CSV:
+            job_config.field_delimiter = self.csv_field_delimiter
+            job_config.quote_character = self.csv_quote_character
+            job_config.allow_quoted_newlines = self.csv_allow_quoted_newlines
+            job_config.skip_leading_rows = self.csv_skip_leading_rows
+
+        return job_config
 
 
 def create_table_from_local(table_id: str,
@@ -13,9 +60,13 @@ def create_table_from_local(table_id: str,
                             file_path: str,
                             schema_file_path: str,
                             source_format: str,
-                            write_disposition: str,
-                            table_description: str,
-                            ignore_unknown_values: bool) -> None:
+                            csv_field_delimiter: str = ',',
+                            csv_quote_character: str = '"',
+                            csv_allow_quoted_newlines: bool = False,
+                            csv_skip_leading_rows: int = 0,
+                            write_disposition: str = bigquery.WriteDisposition.WRITE_EMPTY,
+                            table_description: str = '',
+                            ignore_unknown_values: bool = False) -> None:
     """
     This function creates a table from a local file or directory.
 
@@ -41,20 +92,20 @@ def create_table_from_local(table_id: str,
         Whether unknown values should be ignored or not
     """
 
-    source_format = source_format_validator(source_format)
-    write_disposition = write_disposition_validator(write_disposition)
+    job_config = JobConfig(project_id=project_id,
+                           dataset_id=dataset_id,
+                           schema_file_path=schema_file_path,
+                           source_format=source_format,
+                           csv_field_delimiter=csv_field_delimiter,
+                           csv_quote_character=csv_quote_character,
+                           csv_allow_quoted_newlines=csv_allow_quoted_newlines,
+                           csv_skip_leading_rows=csv_skip_leading_rows,
+                           write_disposition=write_disposition,
+                           table_description=table_description,
+                           ignore_unknown_values=ignore_unknown_values)
 
-    client = bigquery.Client()
-
-    dataset = bigquery.Dataset(f'{project_id}.{dataset_id}')
-
-    job_config = LoadJobConfig()
-
-    job_config.source_format=source_format
-    job_config.ignore_unknown_values=ignore_unknown_values
-    job_config.schema=client.schema_from_json(schema_file_path)
-    job_config.write_disposition = write_disposition
-    job_config.destination_table_description = table_description
+    client = job_config.client
+    dataset = job_config.dataset
 
     jobs = []
 
@@ -63,7 +114,7 @@ def create_table_from_local(table_id: str,
             with open(os.path.join(root, file), 'rb') as source_file:
                 job = client.load_table_from_file(source_file,
                                                   dataset.table(table_id),
-                                                  job_config=job_config)
+                                                  job_config=job_config.config)
 
                 jobs.append(job)
 
@@ -78,9 +129,13 @@ def create_table_from_bucket(uri: str,
                              dataset_id: str,
                              schema_file_path: str,
                              source_format: str,
-                             write_disposition: str,
-                             table_description: str,
-                             ignore_unknown_values: bool) -> None:
+                             csv_field_delimiter: str = ',',
+                             csv_quote_character: str = '"',
+                             csv_allow_quoted_newlines: bool = False,
+                             csv_skip_leading_rows: int = 0,
+                             write_disposition: str = bigquery.WriteDisposition.WRITE_EMPTY,
+                             table_description: str = '',
+                             ignore_unknown_values: bool = False) -> None:
     """
     This function creates a table from a Google Bucket.
 
@@ -118,26 +173,27 @@ def create_table_from_bucket(uri: str,
     if not uri.startswith('gs://'):
         raise ValueError('URI must start with gs://')
 
-    source_format = source_format_validator(source_format)
-    write_disposition = write_disposition_validator(write_disposition)
+    job_config = JobConfig(project_id=project_id,
+                           dataset_id=dataset_id,
+                           schema_file_path=schema_file_path,
+                           source_format=source_format,
+                           csv_field_delimiter=csv_field_delimiter,
+                           csv_quote_character=csv_quote_character,
+                           csv_allow_quoted_newlines=csv_allow_quoted_newlines,
+                           csv_skip_leading_rows=csv_skip_leading_rows,
+                           write_disposition=write_disposition,
+                           table_description=table_description,
+                           ignore_unknown_values=ignore_unknown_values)
 
-    client = bigquery.Client()
-    dataset = bigquery.Dataset(f'{project_id}.{dataset_id}')
-
-    job_config = LoadJobConfig()
-
-    job_config.source_format = source_format
-    job_config.schema = client.schema_from_json(schema_file_path)
-    job_config.write_disposition = write_disposition
-    job_config.destination_table_description = table_description
-    job_config.ignore_unknown_values = ignore_unknown_values
+    client = job_config.client
+    dataset = job_config.dataset
 
     load_job = None
 
     try:
         load_job = client.load_table_from_uri(uri,
                                               dataset.table(table_id),
-                                              job_config=job_config)
+                                              job_config=job_config.config)
 
         result = load_job.result()
 
