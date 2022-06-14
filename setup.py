@@ -7,7 +7,7 @@ with open(path.join(dir, 'README.md'), encoding='utf-8') as file:
 
 
 setup(name='bq_loader',
-      version='0.1.6',
+      version='0.1.7',
       description='Interactive Command Line Interface for Google BigQuery',
       long_description=long_description,
       long_description_content_type='text/markdown',

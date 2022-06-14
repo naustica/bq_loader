@@ -41,7 +41,7 @@ from bq_loader import create_table_from_local
  create_table_from_local(table_id='snapshot',
                          project_id='subugoe-collaborative',
                          dataset_id='resources',
-                         file_path='test_data/',
+                         file_path='test_data/*',
                          schema_file_path='test_schema/schema_crossref.json',
                          source_format='jsonl',
                          write_disposition='WRITE_APPEND',
@@ -71,6 +71,6 @@ create_table_from_bucket(uri='gs://bigschol/tests/*',
 from bq_loader import upload_files_to_bucket
 
 upload_files_to_bucket(bucket_name='bigschol',
-                       file_path='test_data/',
+                       file_path='test_data/*',
                        gcb_dir='tests')
 ```

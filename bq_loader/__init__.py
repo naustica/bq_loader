@@ -4,6 +4,7 @@ from google.api_core.exceptions import BadRequest
 from multiprocessing import cpu_count
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import os
+import glob
 from dataclasses import dataclass
 from .utils import source_format_validator, write_disposition_validator, print_progress
 
@@ -109,14 +110,18 @@ def create_table_from_local(table_id: str,
 
     jobs = []
 
-    for root, dirs, files in os.walk(os.path.abspath(file_path)):
-        for file in files:
-            with open(os.path.join(root, file), 'rb') as source_file:
-                job = client.load_table_from_file(source_file,
-                                                  dataset.table(table_id),
-                                                  job_config=job_config.config)
+    files = glob.glob(file_path)
 
-                jobs.append(job)
+    if not files:
+        raise FileNotFoundError('No such file or directory: {0}'.format(file_path))
+
+    for file in files:
+        with open(os.path.abspath(file), 'rb') as source_file:
+            job = client.load_table_from_file(source_file,
+                                              dataset.table(table_id),
+                                              job_config=job_config.config)
+
+            jobs.append(job)
 
     for n, job in enumerate(jobs, start=1):
         print_progress(n/len(jobs))
@@ -230,20 +235,21 @@ def upload_files_to_bucket(bucket_name: str,
         If the file_path does not exist
     """
 
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(' No such directory: {0}'.format(file_path))
+    files = glob.glob(file_path)
+
+    if not files:
+        raise FileNotFoundError('No such file or directory: {0}'.format(file_path))
 
     with ProcessPoolExecutor(max_workers=max_processes) as executor:
         futures = []
-        for root, dirs, files in os.walk(os.path.abspath(file_path)):
-            for file in files:
-                blob_name = f'{gcb_dir}/{file}'
-                future = executor.submit(
-                    upload_file_to_bucket,
-                    bucket_name,
-                    blob_name,
-                    file_path=os.path.join(root, file))
-                futures.append(future)
+        for file in files:
+            blob_name = f'{gcb_dir}/{file}'
+            future = executor.submit(
+                upload_file_to_bucket,
+                bucket_name,
+                blob_name,
+                file_path=os.path.abspath(file))
+            futures.append(future)
 
         for n, future in enumerate(as_completed(futures), start=1):
             print_progress(n/len(futures))
